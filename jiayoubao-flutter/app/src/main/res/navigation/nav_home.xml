@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment"
+    android:id="@+id/nav_home">
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.jtjr99.jiayoubao.ui.home.HomeFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/home_fragment"/>
+
+    <fragment
+        android:id="@+id/investFragment"
+        android:name="com.jtjr99.jiayoubao.ui.home.InvestFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/invest_fragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/storeFragment"
+        android:name="com.jtjr99.jiayoubao.ui.home.StoreFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/store_fragment">
+    </fragment>
+
+    <fragment
+        android:id="@+id/mineFragment"
+        android:name="com.jtjr99.jiayoubao.ui.home.MineFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/mine_fragment">
+    </fragment>
+</navigation>
