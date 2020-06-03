@@ -1,5 +1,6 @@
 package com.jtjr99.jiayoubao.flutter.channel
 
+import android.util.Log
 import com.jtjr99.jiayoubao.repository.RequestEngine
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
@@ -20,22 +21,28 @@ class NetMethodChannel(flutterEngine: FlutterEngine) : MethodChannel.MethodCallH
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        if (call.method == "test") {
-            val batteryLevel: String = "hello kotlin"
-            if (batteryLevel != null) {
-                result.success(batteryLevel) // 相当于是调用方法的return
-            } else {
-                result.error("UNAVAILABLE", "Battery level not available.", null) // 告诉调用者失败了
-            }
-        } else if (call.method == "get") {
+        if (call.method == "get") {
             GlobalScope.launch(Dispatchers.Main) {
-                val response = RequestEngine.get("https://www.fastmock.site/mock/596f8699defc6f723bd948351260e0a7/flutter/page/my")
-                val body = response.body()
-                if (body != null) {
-                    result.success(body.string())
-                } else {
-                    result.error("error", "请求网络出错误了", null) // 告诉调用者失败了
+                if (call.arguments is HashMap<*, *>) {
+                    val arguments = call.arguments as? HashMap<*, *>
+                    if (arguments != null && arguments.isNotEmpty()) {
+                        val url = arguments["url"]
+                        if (url != null && url is String && url.isNotEmpty()) {
+                            val response =
+                                RequestEngine.get(url)
+                            val body = response.body()
+                            if (body != null) {
+                                result.success(body.string())
+                            } else {
+                                result.error("error", "请求网络出错误了", null) // 告诉调用者失败了
+                            }
+                            return@launch
+                        }
+                    }
                 }
+
+                result.error("error", "请求参数非法", null) // 告诉调用者失败了
+
             }
 
         } else {

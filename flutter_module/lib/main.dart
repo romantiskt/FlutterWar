@@ -6,12 +6,12 @@ import 'package:fluttermodule/module/home/MainTabPage.dart';
 
 void main() {
   runApp(MyApp());
-  if (Platform.isAndroid) {
-    //设置Android头部的导航栏透明
-    SystemUiOverlayStyle systemUiOverlayStyle =
-    SystemUiOverlayStyle(statusBarColor: Colors.transparent);
-    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-  }
+//  if (Platform.isAndroid) {
+//    //设置Android头部的导航栏透明
+//    SystemUiOverlayStyle systemUiOverlayStyle =
+//    SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+//    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
+//  }
 }
 const MaterialColor white = const MaterialColor(
   0xFFFFFFFF,
