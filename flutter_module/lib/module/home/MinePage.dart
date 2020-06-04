@@ -9,10 +9,12 @@ import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttermodule/core/Api.dart';
 import 'package:fluttermodule/entity/Constants.dart';
+import 'package:fluttermodule/entity/mine_page_entity.dart';
 import 'package:fluttermodule/util/LogUtils.dart';
 
 class DataMineWrapper {
   String type;
+  String title;
   List<BannerEntity> banner;
   List<GridEntity> grid;
 
@@ -20,6 +22,8 @@ class DataMineWrapper {
   static const String TYPE_BANNER = "type_banner";
   static const String TYPE_ITEM = "type_item";
   static const String TYPE_GRID = "type_grid";
+  static const String TYPE_TITLE = "type_title";
+  static const String TYPE_ACTIVITY = "type_activity";
 
   DataMineWrapper(this.type);
 }
@@ -59,45 +63,50 @@ class MinePageState extends State<MinePage> {
     List<DataMineWrapper> list = List();
     var params = Map<String, String>();
     Api.instance.get("page/my", params, success: (Object data) {
-      var dataMap = data as Map;
-      LogUtils.d("wang", "response $data");
-      List dataList = dataMap["modules"];
-      for (var i = 0; i < dataList.length; i++) {
-        Map dataListEntity = dataList[i];
-        var type = dataListEntity['type'];
-        switch (dataListEntity['type'].toString()) {
+      var minePageEntity = MinePageEntity.fromJson(data);
+      LogUtils.d("wang", "response $minePageEntity");
+      for (var i = 0; i < minePageEntity.modules.length; i++) {
+        var module = minePageEntity.modules[i];
+        if (module.title != null) {
+          var titleWrapper = DataMineWrapper(DataMineWrapper.TYPE_TITLE);
+          titleWrapper.title = module.title;
+          list.add(titleWrapper);
+        }
+        switch (module.type.toString()) {
           case Constants.TYPE_600:
             list.add(DataMineWrapper(DataMineWrapper.TYPE_HEAD));
             break;
           case Constants.TYPE_601:
-            list.add(DataMineWrapper(DataMineWrapper.TYPE_GRID));
+            addGridItem(module, list);
             break;
           case Constants.TYPE_602:
             list.add(DataMineWrapper(DataMineWrapper.TYPE_ITEM));
             break;
           case Constants.TYPE_603:
-            var bannerWrapper = DataMineWrapper(DataMineWrapper.TYPE_BANNER);
             List<BannerEntity> bannerList = new List();
-            bannerList.add(BannerEntity(
-                "https://images.jyblife.com/prd/6.0icon/jiayou.png",
-                "https://www.baidu.com"));
-            bannerList.add(BannerEntity(
-                "https://images.jyblife.com/prd/6.0icon/licai.png",
-                "https://www.baidu.com"));
-            bannerList.add(BannerEntity(
-                "https://images.jyblife.com/prd/6.0icon/jiayou.png",
-                "https://www.baidu.com"));
+            var bannerWrapper = DataMineWrapper(DataMineWrapper.TYPE_BANNER);
+            for (int i = 0; i < module.items.length; i++) {
+              bannerList.add(
+                  BannerEntity(module.items[i].image, module.items[i].url));
+            }
             bannerWrapper.banner = bannerList;
             list.add(bannerWrapper);
             break;
           case Constants.TYPE_604:
-            list.add(DataMineWrapper(DataMineWrapper.TYPE_ITEM));
+            List<GridEntity> gridList = new List();
+            for (int i = 0; i < module.items.length; i++) {
+              gridList.add(GridEntity(module.items[i].image,
+                  module.items[i].text, module.items[i].url));
+            }
+            var gridWrapper = DataMineWrapper(DataMineWrapper.TYPE_ACTIVITY);
+            gridWrapper.grid = gridList;
+            list.add(gridWrapper);
             break;
           case Constants.TYPE_605:
-            list.add(DataMineWrapper(DataMineWrapper.TYPE_GRID));
+            addGridItem(module, list);
             break;
           case Constants.TYPE_606:
-            list.add(DataMineWrapper(DataMineWrapper.TYPE_GRID));
+            addGridItem(module, list);
             break;
         }
       }
@@ -105,7 +114,19 @@ class MinePageState extends State<MinePage> {
         _list = list;
       });
     }, failed: (String code, String msg) {
+      LogUtils.d("wang", "请求失败$msg");
     });
+  }
+
+  void addGridItem(Modules module, List<DataMineWrapper> list) {
+    List<GridEntity> gridList = new List();
+    for (int i = 0; i < module.items.length; i++) {
+      gridList.add(GridEntity(
+          module.items[i].image, module.items[i].text, module.items[i].url));
+    }
+    var gridWrapper = DataMineWrapper(DataMineWrapper.TYPE_GRID);
+    gridWrapper.grid = gridList;
+    list.add(gridWrapper);
   }
 
   @override
@@ -124,6 +145,10 @@ class MinePageState extends State<MinePage> {
         return _getBanner(index);
       case DataMineWrapper.TYPE_GRID:
         return _getGrid(index);
+      case DataMineWrapper.TYPE_TITLE:
+        return _getTitle(index);
+      case DataMineWrapper.TYPE_ACTIVITY:
+        return _getActivity(index);
       default:
         return Text("我是一条默认的item");
     }
@@ -169,6 +194,15 @@ class MinePageState extends State<MinePage> {
   }
 
   Widget _getBody() {
+    if (_list == null)
+      return GestureDetector(
+        onTap: requestData,
+        child: Container(
+          height: 100,
+          child: Text("网络错误了哦"),
+          margin: EdgeInsets.all(40),
+        ),
+      );
     LogUtils.d("wang", "list size $_list.length");
     var views = List<Widget>();
     for (var i = 0; i < _list.length; i++) {
@@ -206,10 +240,11 @@ class MinePageState extends State<MinePage> {
   }
 
   Widget _getGrid(int index) {
+    var gridWrapper = _list[index];
     return Container(
-      margin: EdgeInsets.fromLTRB(16, 0, 16, 12),
+      margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: GridView.builder(
-          itemCount: 20,
+          itemCount: gridWrapper.grid.length,
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -221,21 +256,83 @@ class MinePageState extends State<MinePage> {
               crossAxisSpacing: 10.0),
           itemBuilder: (BuildContext context, int index) {
             //Widget Function(BuildContext context, int index)
-            return getItemContainer();
+            return getItemContainer(gridWrapper.grid[index]);
           }),
     );
   }
 
-  Widget getItemContainer() {
+  Widget getItemContainer(GridEntity grid) {
     return Container(
       child: Expanded(
         child: Column(
           children: [
-            Image.asset("assets/image/ic_mine_head_unlogin.png",
-                height: 60, fit: BoxFit.cover),
-            Text("hello jack")
+            Image.network(grid.image, height: 60, fit: BoxFit.cover),
+            Text(grid.text)
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _getTitle(int index) {
+    var titleWrapper = _list[index];
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
+      alignment: Alignment.bottomLeft,
+      child: Text(
+        titleWrapper.title,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFF3D3F48),
+            fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _getActivity(int index) {
+    var grid = _list[index].grid;
+    return Container(
+      margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: Image.network(grid[0].image, fit: BoxFit.cover),
+          ),
+          Expanded(
+            flex: 0,
+            child: Container(
+              width: 4,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: <Widget>[
+                Image.network(grid[1].image, fit: BoxFit.cover),
+                Container(height: 4,),
+                Image.network(grid[3].image, fit: BoxFit.cover),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 0,
+            child: Container(
+              width: 4,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              children: <Widget>[
+                Image.network(grid[2].image, fit: BoxFit.cover),
+                Container(height: 4,),
+                Image.network(grid[4].image, fit: BoxFit.cover),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
