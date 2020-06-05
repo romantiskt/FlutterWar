@@ -24,6 +24,7 @@ dependencies:
   flutter_easyrefresh: ^2.1.1
   flutter_swiper : ^1.1.4
   json_annotation: ^3.0.0
+  fluro: "^1.6.3"
   flutter:
     sdk: flutter
 

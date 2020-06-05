@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttermodule/module/home/IndexPage.dart';
-import 'package:fluttermodule/module/home/MinePage.dart';
-import 'package:fluttermodule/module/home/StorePage.dart';
-import 'package:fluttermodule/module/home/InvestPage.dart';
+import 'package:fluttermodule/module/home/home_page.dart';
+import 'package:fluttermodule/module/home/invest_page.dart';
+import 'package:fluttermodule/module/home/mine_page.dart';
+import 'package:fluttermodule/module/home/store_page.dart';
 
 import '../../main.dart';
 

@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttermodule/module/home/MainTabPage.dart';
+import 'package:fluttermodule/module/home/main_page.dart';
+
+import 'config/application.dart';
+import 'config/routes.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,7 +34,12 @@ const MaterialColor white = const MaterialColor(
 );
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-
+  MyApp() {
+    final router = new Router();
+    Routes.configureRoutes(router);
+    // 这里设置项目环境
+    Application.router = router;
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,7 +47,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainTabPage(title: 'Flutter'),
+      onGenerateRoute: Application.router.generator,
     );
   }
 }

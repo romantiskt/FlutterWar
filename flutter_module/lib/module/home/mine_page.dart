@@ -7,6 +7,8 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:fluttermodule/config/application.dart';
+import 'package:fluttermodule/config/routes.dart';
 import 'package:fluttermodule/core/Api.dart';
 import 'package:fluttermodule/entity/Constants.dart';
 import 'package:fluttermodule/entity/mine_page_entity.dart';
@@ -161,16 +163,13 @@ class MinePageState extends State<MinePage> {
             height: 85, width: 85),
         Container(
           alignment: Alignment.center,
-          child: GestureDetector(
-            child: Text(
-              "欢迎你, 新朋友",
-              style: TextStyle(
-                color: Color(0XFF3D3F48),
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
+          child:Text(
+            "欢迎你, 新朋友",
+            style: TextStyle(
+              color: Color(0XFF3D3F48),
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
             ),
-            onTap: requestData,
           ),
         ),
         Container(
@@ -178,7 +177,10 @@ class MinePageState extends State<MinePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("登录/注册"),
+              GestureDetector(
+                child: Text("登录/注册"),
+                onTap: _goLogin,
+              ),
               Image.asset(
                 'assets/image/ic_arrow_right_black.png',
                 height: 10,
@@ -335,5 +337,9 @@ class MinePageState extends State<MinePage> {
         ],
       ),
     );
+  }
+
+  _goLogin() {
+    Application.router.navigateTo(context, Routes.enterLogin);
   }
 }

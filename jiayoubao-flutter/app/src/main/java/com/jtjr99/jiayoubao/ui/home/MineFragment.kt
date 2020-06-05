@@ -24,6 +24,7 @@ class MineFragment : BaseFragment() {
         var intent = Intent(context, MyFlutterActivity::class.java)
         intent.putExtra("cached_engine_id", "my_engine_id")
         intent.putExtra("background_mode", FlutterActivityLaunchConfigs.BackgroundMode.opaque.name)//透明模式不会采用RenderMode.surface绘制
+        intent.putExtra("route","/")
         startActivity(intent)
     }
 
