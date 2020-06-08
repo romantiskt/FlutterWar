@@ -9,6 +9,9 @@
 #import "AppDelegate.h"
 #import "IMTabBarController.h"
 #import "GeneratedPluginRegistrant.h"
+#import "RegisterApi.h"
+#import <Foundation/Foundation.h>
+
 
 @interface AppDelegate ()
 
@@ -28,6 +31,39 @@
     self.flutterEngine = [[FlutterEngine alloc] initWithName:@"my flutter engine"];
     // Runs the default Dart entrypoint with a default Flutter route.
     [self.flutterEngine run];
+    
+    FlutterMethodChannel* netWorkChannel = [FlutterMethodChannel
+                                            methodChannelWithName:@"native_network"
+                                            binaryMessenger:self.flutterEngine.binaryMessenger];
+    [netWorkChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+        if ([@"get" isEqualToString:call.method]) {
+            NSDictionary *args = call.arguments;
+            RegisterApi *api = [[RegisterApi alloc] initWithUrl:args[@"url"] ];
+                   [api startWithCompletionBlockWithSuccess:^(YTKBaseRequest *request) {
+                       NSLog(@"succeed");
+                       result(request.responseString);
+                   } failure:^(YTKBaseRequest *request) {
+                       // 你可以直接在这里使用 self
+                       NSLog(@"failed");
+                       result([FlutterError errorWithCode:@"UNAVAILABLE"
+                                                       message:@"请求错误"
+                                                       details:nil]);
+                   }];
+        }
+    }];
+    
+    FlutterMethodChannel* logChannel=[FlutterMethodChannel methodChannelWithName:@"native_log" binaryMessenger:self.flutterEngine.binaryMessenger];
+    [logChannel setMethodCallHandler:^(FlutterMethodCall *  call, FlutterResult   result) {
+        NSDictionary *args = call.arguments;
+        NSString* tag=args[@"tag"];
+        NSString* msg=args[@"msg"];
+        if ([@"logD" isEqualToString:call.method]) {
+            NSLog(@"debug tag:%@  msg:%@",tag,msg);
+        }else{
+             NSLog(@"normal tag:%@  msg:%@",tag,msg);
+        }
+    }];
+    
     // Used to connect plugins (only if you have plugins with iOS platform code).
     [GeneratedPluginRegistrant registerWithRegistry:self.flutterEngine];
     

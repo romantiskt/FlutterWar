@@ -19,6 +19,7 @@
 		D316AAD721A3E6650094E3E5 /* IMNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D316AAD621A3E6650094E3E5 /* IMNavigationViewController.m */; };
 		D316AADA21A3F0020094E3E5 /* IMTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = D316AAD921A3F0020094E3E5 /* IMTabBar.m */; };
 		D316AADD21A3F0510094E3E5 /* IMTabButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D316AADC21A3F0510094E3E5 /* IMTabButton.m */; };
+		D32667B8248E1C000022929D /* RegisterApi.m in Sources */ = {isa = PBXBuildFile; fileRef = D32667B7248E1C000022929D /* RegisterApi.m */; };
 		D3CA3E6F21A4F7DF00BC9BCA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3CA3E6E21A4F7DF00BC9BCA /* UIKit.framework */; };
 		D3CA3E7821A52D2A00BC9BCA /* IMColor.m in Sources */ = {isa = PBXBuildFile; fileRef = D3CA3E7721A52D2A00BC9BCA /* IMColor.m */; };
 		D3CA3E8021A531BB00BC9BCA /* AppResouce.m in Sources */ = {isa = PBXBuildFile; fileRef = D3CA3E7F21A531BB00BC9BCA /* AppResouce.m */; };
@@ -77,6 +78,8 @@
 		D316AAD921A3F0020094E3E5 /* IMTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMTabBar.m; sourceTree = "<group>"; };
 		D316AADB21A3F0510094E3E5 /* IMTabButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMTabButton.h; sourceTree = "<group>"; };
 		D316AADC21A3F0510094E3E5 /* IMTabButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMTabButton.m; sourceTree = "<group>"; };
+		D32667B7248E1C000022929D /* RegisterApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RegisterApi.m; sourceTree = "<group>"; };
+		D32667B9248E1C150022929D /* RegisterApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RegisterApi.h; sourceTree = "<group>"; };
 		D3CA3E6E21A4F7DF00BC9BCA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D3CA3E7621A52D2A00BC9BCA /* IMColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IMColor.h; sourceTree = "<group>"; };
 		D3CA3E7721A52D2A00BC9BCA /* IMColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IMColor.m; sourceTree = "<group>"; };
@@ -133,7 +136,6 @@
 				95BA71254D26B8BA94347693 /* Pods-ImitateTests.debug.xcconfig */,
 				A908424D620A61DC908D3537 /* Pods-ImitateTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -162,8 +164,8 @@
 		D316AA8E21A3AA940094E3E5 /* Imitate */ = {
 			isa = PBXGroup;
 			children = (
-				D3CA3E8121A5340A00BC9BCA /* System */,
 				D316AAC121A3AB350094E3E5 /* Src */,
+				D3CA3E8121A5340A00BC9BCA /* System */,
 				D316AA9821A3AA940094E3E5 /* Assets.xcassets */,
 				D316AA9A21A3AA940094E3E5 /* LaunchScreen.storyboard */,
 				D316AA9D21A3AA940094E3E5 /* Info.plist */,
@@ -193,6 +195,7 @@
 		D316AAC121A3AB350094E3E5 /* Src */ = {
 			isa = PBXGroup;
 			children = (
+				D32667B6248E1BD10022929D /* Core */,
 				D316AAC321A3AB4B0094E3E5 /* Module */,
 				D316AAC221A3AB3E0094E3E5 /* App */,
 			);
@@ -294,6 +297,15 @@
 			children = (
 			);
 			path = Other;
+			sourceTree = "<group>";
+		};
+		D32667B6248E1BD10022929D /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D32667B7248E1C000022929D /* RegisterApi.m */,
+				D32667B9248E1C150022929D /* RegisterApi.h */,
+			);
+			path = Core;
 			sourceTree = "<group>";
 		};
 		D3CA3E6D21A4F7DF00BC9BCA /* Frameworks */ = {
@@ -490,12 +502,16 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Imitate/Pods-Imitate-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${PODS_ROOT}/../../flutter_module/.ios/Flutter/engine/Flutter.framework",
+				"${BUILT_PRODUCTS_DIR}/YTKNetwork/YTKNetwork.framework",
 				"${PODS_ROOT}/../../flutter_module/.ios/Flutter/App.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YTKNetwork.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/App.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -570,12 +586,16 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Imitate-ImitateUITests/Pods-Imitate-ImitateUITests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${PODS_ROOT}/../../flutter_module/.ios/Flutter/engine/Flutter.framework",
+				"${BUILT_PRODUCTS_DIR}/YTKNetwork/YTKNetwork.framework",
 				"${PODS_ROOT}/../../flutter_module/.ios/Flutter/App.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YTKNetwork.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/App.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -593,6 +613,7 @@
 				D316AAD721A3E6650094E3E5 /* IMNavigationViewController.m in Sources */,
 				D316AAD421A3E0850094E3E5 /* IMTabBarController.m in Sources */,
 				D3CA3E8821A53A7900BC9BCA /* InverstmentViewController.m in Sources */,
+				D32667B8248E1C000022929D /* RegisterApi.m in Sources */,
 				D316AA9F21A3AA940094E3E5 /* main.m in Sources */,
 				D316AA9121A3AA940094E3E5 /* AppDelegate.m in Sources */,
 				D316AADA21A3F0020094E3E5 /* IMTabBar.m in Sources */,
