@@ -7,6 +7,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_easyrefresh/material_footer.dart';
 import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:fluttermodule/base/base_widget.dart';
 import 'package:fluttermodule/config/application.dart';
 import 'package:fluttermodule/config/routes.dart';
 import 'package:fluttermodule/core/Api.dart';
@@ -42,26 +43,66 @@ class BannerEntity {
   BannerEntity(this.image, this.url);
 }
 
-class MinePage extends StatefulWidget {
+class MinePage extends BaseWidget {
   @override
-  State<StatefulWidget> createState() {
+  BaseWidgetState<BaseWidget> getState() {
     return MinePageState();
   }
 }
 
-class MinePageState extends State<MinePage> {
+class MinePageState extends BaseWidgetState<MinePage> {
   EasyRefreshController _controller = EasyRefreshController();
   List<DataMineWrapper> _list;
+  EasyRefreshController _easyRefreshController = EasyRefreshController();
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    if (_list == null) return Text("");
+    var views = List<Widget>();
+    for (var i = 0; i < _list.length; i++) {
+      views.add(inflateItemView(i));
+    }
+    return EasyRefresh(
+      controller: _easyRefreshController,
+      header: MaterialHeader(),
+      enableControlFinishRefresh: true,
+      onRefresh: () async {
+        await Future.delayed(Duration(seconds: 1), () {
+          if (mounted) {
+            LogUtils.d("wang", "刷新了啦");
+            requestData(false);
+            _easyRefreshController.finishRefresh(success: true);
+          }
+        });
+      },
+      child: ListView(
+        children: [
+          Column(
+            children: views,
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Future<void> initState() {
     super.initState();
     LogUtils.d("wang", "initState");
+    setAppBarVisible(false);
+    setTopBarVisible(false);
 
-    requestData();
+    requestData(true);
   }
 
-  Future<void> requestData() async {
+  void retryClick() {
+    requestData(true);
+  }
+
+  Future<void> requestData(bool showProgress) async {
+    if(showProgress){
+      setLoadingWidgetVisible(true);
+    }
     List<DataMineWrapper> list = List();
     var params = Map<String, String>();
     Api.instance.get("page/my", params, success: (Object data) {
@@ -112,11 +153,20 @@ class MinePageState extends State<MinePage> {
             break;
         }
       }
+
+      if(showProgress){
+        setLoadingWidgetVisible(false);
+      }
       setState(() {
         _list = list;
       });
     }, failed: (String code, String msg) {
       LogUtils.d("wang", "请求失败$msg");
+      if(showProgress){
+        setLoadingWidgetVisible(false);
+      }
+      setErrorWidgetVisible(true);
+      setErrorContent(msg);
     });
   }
 
@@ -129,11 +179,6 @@ class MinePageState extends State<MinePage> {
     var gridWrapper = DataMineWrapper(DataMineWrapper.TYPE_GRID);
     gridWrapper.grid = gridList;
     list.add(gridWrapper);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _getBody();
   }
 
   Widget inflateItemView(int index) {
@@ -163,7 +208,7 @@ class MinePageState extends State<MinePage> {
             height: 85, width: 85),
         Container(
           alignment: Alignment.center,
-          child:Text(
+          child: Text(
             "欢迎你, 新朋友",
             style: TextStyle(
               color: Color(0XFF3D3F48),
@@ -191,31 +236,7 @@ class MinePageState extends State<MinePage> {
           margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
         )
       ]),
-      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-    );
-  }
-
-  Widget _getBody() {
-    if (_list == null)
-      return GestureDetector(
-        onTap: requestData,
-        child: Container(
-          height: 100,
-          child: Text("网络错误了哦"),
-          margin: EdgeInsets.all(40),
-        ),
-      );
-    LogUtils.d("wang", "list size $_list.length");
-    var views = List<Widget>();
-    for (var i = 0; i < _list.length; i++) {
-      views.add(inflateItemView(i));
-    }
-    return ListView(
-      children: [
-        Column(
-          children: views,
-        )
-      ],
+      margin: EdgeInsets.fromLTRB(0, 40, 0, 0),
     );
   }
 
@@ -313,7 +334,9 @@ class MinePageState extends State<MinePage> {
             child: Column(
               children: <Widget>[
                 Image.network(grid[1].image, fit: BoxFit.cover),
-                Container(height: 4,),
+                Container(
+                  height: 4,
+                ),
                 Image.network(grid[3].image, fit: BoxFit.cover),
               ],
             ),
@@ -329,7 +352,9 @@ class MinePageState extends State<MinePage> {
             child: Column(
               children: <Widget>[
                 Image.network(grid[2].image, fit: BoxFit.cover),
-                Container(height: 4,),
+                Container(
+                  height: 4,
+                ),
                 Image.network(grid[4].image, fit: BoxFit.cover),
               ],
             ),
@@ -341,5 +366,9 @@ class MinePageState extends State<MinePage> {
 
   _goLogin() {
     Application.router.navigateTo(context, Routes.enterLogin);
+  }
+
+  Widget _getProgressWidget() {
+    return Text("正在加载中");
   }
 }

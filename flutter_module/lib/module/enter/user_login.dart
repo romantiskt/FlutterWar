@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:fluttermodule/base/base_widget.dart';
 import 'package:fluttermodule/config/application.dart';
 
 import '../../main.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends BaseWidget {
   @override
-  State<StatefulWidget> createState() {
+  BaseWidgetState<BaseWidget> getState() {
     return LoginPageState();
   }
 }
 
-class LoginPageState extends State {
+class LoginPageState extends BaseWidgetState<BaseWidget> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    setTopBarVisible(true);
+    setAppBarVisible(false);
+  }
+
+  @override
+  Widget buildWidget(BuildContext context) {
     return _getBody();
   }
 
@@ -22,16 +30,6 @@ class LoginPageState extends State {
           body: Container(
             child: Text("去登录"),
           ),
-          appBar: AppBar(
-              iconTheme: IconThemeData(
-                color: Colors.black, //修改颜色
-              ),
-              title: Text(
-                "登录",
-                style: TextStyle(color: Color(0xFF000000)),
-              ),
-              backgroundColor: white,
-              automaticallyImplyLeading: true),
         ),
         onWillPop: onBack);
   }

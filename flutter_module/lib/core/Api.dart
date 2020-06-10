@@ -39,7 +39,7 @@ class Api {
         if (decodeStr['code'] == '0') {
           success( decodeStr["data"]);
         } else {
-          failed(decodeStr['code'], decodeStr['msg']);
+          failed(decodeStr['code'], decodeStr['msg']==null?"网络开小差了,请稍后再试":decodeStr['msg']);
         }
       } else {
         failed("-2", "response is null");
