@@ -55,6 +55,8 @@ class MinePageState extends BaseWidgetState<MinePage> {
   EasyRefreshController _controller = EasyRefreshController();
   List<DataMineWrapper> _list;
   EasyRefreshController _easyRefreshController = EasyRefreshController();
+  ScrollController _scrollController = ScrollController();
+  double _titleAlpha = 0;
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -63,26 +65,65 @@ class MinePageState extends BaseWidgetState<MinePage> {
     for (var i = 0; i < _list.length; i++) {
       views.add(inflateItemView(i));
     }
-    return EasyRefresh(
-      controller: _easyRefreshController,
-      header: MaterialHeader(),
-      enableControlFinishRefresh: true,
-      onRefresh: () async {
-        await Future.delayed(Duration(seconds: 1), () {
-          if (mounted) {
-            ToastUtil.showToast("刷新了啦");
-            requestData(false);
-            _easyRefreshController.finishRefresh(success: true);
-          }
-        });
-      },
-      child: ListView(
-        children: [
-          Column(
-            children: views,
-          )
-        ],
-      ),
+    return Stack(
+      children: <Widget>[
+        EasyRefresh(
+          controller: _easyRefreshController,
+          header: MaterialHeader(),
+          enableControlFinishRefresh: true,
+          onRefresh: () async {
+            await Future.delayed(Duration(seconds: 1), () {
+              if (mounted) {
+                ToastUtil.showToast("刷新了啦");
+                requestData(false);
+                _easyRefreshController.finishRefresh(success: true);
+              }
+            });
+          },
+          child: ListView(
+            controller: _scrollController,
+            children: [
+              Column(
+                children: views,
+              )
+            ],
+          ),
+        ),
+//        Container(
+//          child: Column(
+//            children: <Widget>[
+//              Container(
+//                height: getTopBarHeight(),
+//                width: double.infinity,
+//                color: Colors.white,
+//              ),
+//              AnimatedOpacity(
+//                opacity: _titleAlpha,
+//                duration: Duration(microseconds: 100),
+//                child: Container(
+//                  height: 44,
+//                  width: double.infinity,
+//                  color: Colors.white,
+//                  padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+//                  child: Row(
+//                    children: <Widget>[
+//                      Image.asset(
+//                        "assets/image/ic_mine_head_unlogin.png",
+//                        width: 30,
+//                        height: 30,
+//                      ),
+//                      Text(
+//                        "135****8560",
+//                        style: TextStyle(color: Colors.black, fontSize: 16),
+//                      )
+//                    ],
+//                  ),
+//                ),
+//              )
+//            ],
+//          ),
+//        )
+      ],
     );
   }
 
@@ -92,7 +133,19 @@ class MinePageState extends BaseWidgetState<MinePage> {
     LogUtils.d("wang", "initState");
     setAppBarVisible(false);
     setTopBarVisible(false);
-
+//    _scrollController
+//      ..addListener(() {
+//        setState(() {
+//          if (_scrollController.offset > 50) {
+//            _titleAlpha = 1;
+//          } else if (_scrollController.offset <= 0) {
+//            _titleAlpha = 0;
+//          } else {
+//            _titleAlpha = _scrollController.offset/ 50;
+//          }
+//        });
+//      });
+//
     requestData(true);
   }
 
@@ -101,7 +154,7 @@ class MinePageState extends BaseWidgetState<MinePage> {
   }
 
   Future<void> requestData(bool showProgress) async {
-    if(showProgress){
+    if (showProgress) {
       setLoadingWidgetVisible(true);
     }
     List<DataMineWrapper> list = List();
@@ -155,7 +208,7 @@ class MinePageState extends BaseWidgetState<MinePage> {
         }
       }
 
-      if(showProgress){
+      if (showProgress) {
         setLoadingWidgetVisible(false);
       }
       setState(() {
@@ -163,7 +216,7 @@ class MinePageState extends BaseWidgetState<MinePage> {
       });
     }, failed: (String code, String msg) {
       LogUtils.d("wang", "请求失败$msg");
-      if(showProgress){
+      if (showProgress) {
         setLoadingWidgetVisible(false);
       }
       setErrorWidgetVisible(true);
