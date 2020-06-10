@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:fluttermodule/util/LogUtils.dart';
+import 'package:fluttermodule/util/log_util.dart';
 
 typedef void Success(Object data);
 typedef void Failed(String code, String errorMsg);

@@ -25,6 +25,7 @@ dependencies:
   flutter_swiper : ^1.1.4
   json_annotation: ^3.0.0
   provider: ^3.1.0
+  fluttertoast: ^4.0.0
   fluro: "^1.6.3"
   flutter:
     sdk: flutter

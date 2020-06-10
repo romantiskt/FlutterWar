@@ -13,7 +13,8 @@ import 'package:fluttermodule/config/routes.dart';
 import 'package:fluttermodule/core/Api.dart';
 import 'package:fluttermodule/entity/Constants.dart';
 import 'package:fluttermodule/entity/mine_page_entity.dart';
-import 'package:fluttermodule/util/LogUtils.dart';
+import 'package:fluttermodule/util/log_util.dart';
+import 'package:fluttermodule/util/toast_util.dart';
 
 class DataMineWrapper {
   String type;
@@ -69,7 +70,7 @@ class MinePageState extends BaseWidgetState<MinePage> {
       onRefresh: () async {
         await Future.delayed(Duration(seconds: 1), () {
           if (mounted) {
-            LogUtils.d("wang", "刷新了啦");
+            ToastUtil.showToast("刷新了啦");
             requestData(false);
             _easyRefreshController.finishRefresh(success: true);
           }
