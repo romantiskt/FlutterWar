@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
 abstract class BaseWidget extends StatefulWidget {
@@ -362,14 +363,7 @@ abstract class BaseWidgetState<T extends BaseWidget> extends State<T>
       width: double.infinity,
       height: double.infinity,
       child: Center(
-        child:
-            // 圆形进度条
-            new CircularProgressIndicator(
-          strokeWidth: 4.0,
-          backgroundColor: Colors.blue,
-          // value: 0.2,
-          valueColor: new AlwaysStoppedAnimation<Color>(_appBarColor),
-        ),
+        child:SpinKitWave(color: Colors.orangeAccent, type: SpinKitWaveType.start),
       ),
     );
   }
